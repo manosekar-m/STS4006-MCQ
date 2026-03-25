@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STS 4006 — MCQ Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #7c6aff;
+    --accent2: #ff6a9b;
+    --accent3: #6affdb;
+    --text: #e8e8f0;
+    --muted: #7070a0;
+    --correct: #1aff9c;
+    --wrong: #ff4d7a;
+    --correct-bg: rgba(26,255,156,0.08);
+    --wrong-bg: rgba(255,77,122,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 20% 20%, rgba(124,106,255,0.12) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 80% 80%, rgba(106,255,219,0.07) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+  .container { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; position: relative; z-index: 1; }
+  .site-header { text-align: center; margin-bottom: 56px; animation: fadeDown 0.6s ease both; }
+  .badge { display: inline-block; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 2px; padding: 4px 12px; margin-bottom: 18px; }
+  h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
+  .subtitle { color: var(--muted); font-size: 0.95rem; font-family: 'Space Mono', monospace; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; animation: fadeUp 0.5s ease both; }
+  .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .card-desc { color: var(--muted); font-size: 0.88rem; font-family: 'Space Mono', monospace; margin-bottom: 28px; line-height: 1.6; }
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .mode-btn { background: var(--surface2); border: 2px solid var(--border); border-radius: 12px; padding: 24px 20px; cursor: pointer; transition: all 0.2s; text-align: left; color: var(--text); font-family: 'Syne', sans-serif; }
+  .mode-btn:hover { border-color: var(--accent); background: rgba(124,106,255,0.08); transform: translateY(-2px); }
+  .mode-btn.active { border-color: var(--accent); background: rgba(124,106,255,0.12); }
+  .mode-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .mode-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .mode-desc { font-size: 0.78rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+  label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  input[type="number"], select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Space Mono', monospace; font-size: 1rem; padding: 12px 16px; outline: none; transition: border-color 0.2s; appearance: none; }
+  input[type="number"]:focus, select:focus { border-color: var(--accent); }
+  .form-group { margin-bottom: 24px; }
+  .topic-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 0; }
+  .topic-chip { background: var(--surface2); border: 1px solid var(--border); border-radius: 50px; padding: 8px 18px; font-size: 0.82rem; font-family: 'Space Mono', monospace; cursor: pointer; transition: all 0.2s; color: var(--muted); user-select: none; }
+  .topic-chip:hover { border-color: var(--accent); color: var(--text); }
+  .topic-chip.selected { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 14px 28px; font-size: 0.95rem; font-weight: 700; font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s; width: 100%; justify-content: center; margin-top: 28px; }
+  .btn:hover { background: #6054d4; transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); margin-top: 12px; }
+  .btn-outline:hover { border-color: var(--accent); background: rgba(124,106,255,0.08); }
+  .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; gap: 16px; flex-wrap: wrap; }
+  .quiz-meta { font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--muted); }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 4px; margin-bottom: 36px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width 0.4s ease; }
+  .question-num { font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .question-text { font-size: 1.1rem; font-weight: 600; line-height: 1.55; margin-bottom: 28px; color: var(--text); }
+  .options-list { display: flex; flex-direction: column; gap: 12px; }
+  .option { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 14px; font-size: 0.95rem; line-height: 1.4; animation: fadeUp 0.3s ease both; }
+  .option:hover:not(.selected):not(.correct):not(.wrong) { border-color: var(--accent); background: rgba(124,106,255,0.08); }
+  .option.selected { border-color: var(--accent); background: rgba(124,106,255,0.12); }
+  .option.correct { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+  .option.wrong { border-color: var(--wrong); background: var(--wrong-bg); color: var(--wrong); }
+  .option-key { min-width: 30px; height: 30px; border-radius: 6px; background: var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; transition: background 0.2s; }
+  .option.selected .option-key { background: var(--accent); color: #fff; }
+  .option.correct .option-key { background: var(--correct); color: #000; }
+  .option.wrong .option-key { background: var(--wrong); color: #fff; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; gap: 12px; }
+  .btn-nav { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 12px 22px; font-size: 0.88rem; font-weight: 700; font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s; flex: 1; }
+  .btn-nav:hover { border-color: var(--accent); background: rgba(124,106,255,0.08); }
+  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-nav.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-nav.primary:hover { background: #6054d4; }
+  .answer-key { background: var(--surface2); border: 1px solid rgba(26,255,156,0.3); border-radius: 8px; padding: 14px 18px; margin-top: 16px; font-size: 0.85rem; font-family: 'Space Mono', monospace; display: none; color: var(--correct); animation: fadeUp 0.3s ease; line-height: 1.5; }
+  .answer-key.visible { display: block; }
+  .score-ring { width: 140px; height: 140px; margin: 0 auto 24px; position: relative; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; line-height: 1; }
+  .score-num span { font-size: 0.75rem; color: var(--muted); font-family: 'Space Mono', monospace; font-weight: 400; }
+  .result-title { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+  .result-sub { text-align: center; color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.85rem; margin-bottom: 32px; }
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+  .stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat-val { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+  .stat-val.c { color: var(--correct); }
+  .stat-val.w { color: var(--wrong); }
+  .stat-val.s { color: var(--muted); }
+  .stat-label { font-size: 0.72rem; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: 1px; text-transform: uppercase; }
+  .review-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 14px; animation: fadeUp 0.3s ease both; }
+  .review-item.cb { border-color: rgba(26,255,156,0.3); }
+  .review-item.wb { border-color: rgba(255,77,122,0.3); }
+  .review-q { font-size: 0.92rem; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
+  .review-answers { font-family: 'Space Mono', monospace; font-size: 0.8rem; display: flex; flex-direction: column; gap: 5px; }
+  .rc { color: var(--correct); }
+  .rw { color: var(--wrong); }
+  .rs { color: var(--muted); }
+  .rtag { font-size: 0.72rem; font-family: 'Space Mono', monospace; padding: 3px 10px; border-radius: 4px; font-weight: 700; }
+  .tag-c { background: var(--correct-bg); color: var(--correct); border: 1px solid rgba(26,255,156,0.3); }
+  .tag-w { background: var(--wrong-bg); color: var(--wrong); border: 1px solid rgba(255,77,122,0.3); }
+  .tag-s { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+  .info-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-family: 'Space Mono', monospace; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 50px; padding: 5px 14px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); flex-shrink: 0; }
+  .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; font-family: 'Space Mono', monospace; }
+  .error-msg { color: var(--wrong); font-size: 0.82rem; font-family: 'Space Mono', monospace; margin-top: 8px; display: none; }
+  .error-msg.visible { display: block; }
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+  .page { display: none; }
+  .page.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) { .mode-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr; } .card { padding: 24px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="site-header">
+    <div class="badge">STS 4006</div>
+    <h1>Data Structures<br>MCQ Quiz</h1>
+    <p class="subtitle">// Test your knowledge. Track your progress.</p>
+  </header>
+
+  <!-- PAGE 1: SETUP -->
+  <div id="page-setup" class="page active">
+    <div class="card">
+      <div class="card-title">Choose Your Mode</div>
+      <div class="card-desc">Pick how you want to be quizzed — by count or by topic</div>
+      <div class="mode-grid">
+        <button class="mode-btn active" id="mode-random" onclick="setMode('random')">
+          <div class="mode-icon">🎲</div>
+          <div class="mode-title">Random Questions</div>
+          <div class="mode-desc">Set a count, get random questions from all topics</div>
+        </button>
+        <button class="mode-btn" id="mode-topic" onclick="setMode('topic')">
+          <div class="mode-icon">📂</div>
+          <div class="mode-title">By Topic</div>
+          <div class="mode-desc">Pick specific topics to focus on</div>
+        </button>
+      </div>
+
+      <div id="random-options">
+        <div class="form-group">
+          <label>Number of Questions</label>
+          <input type="number" id="q-count" min="1" max="200" value="10" placeholder="e.g. 10">
+          <div class="error-msg" id="count-error"></div>
+        </div>
+      </div>
+
+      <div id="topic-options" style="display:none">
+        <div class="section-label">Select Topics</div>
+        <div class="topic-grid" id="topic-grid"></div>
+        <div class="error-msg" id="topic-error">Please select at least one topic.</div>
+        <div class="divider"></div>
+        <div class="form-group">
+          <label>Questions Per Topic (leave blank for all)</label>
+          <input type="number" id="q-per-topic" min="1" max="30" placeholder="e.g. 5">
+        </div>
+      </div>
+
+      <button class="btn" onclick="startQuiz()">Start Quiz →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2: QUIZ -->
+  <div id="page-quiz" class="page">
+    <div class="quiz-header">
+      <div class="quiz-meta" id="quiz-meta">Question 1 of 10</div>
+      <div class="info-pill"><span class="dot"></span><span id="topic-label">—</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="card">
+      <div class="question-num" id="q-num">Q 01</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options-list" id="options-list"></div>
+      <div class="answer-key" id="answer-key"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-nav" id="btn-prev" onclick="navigate(-1)" disabled>← Prev</button>
+      <button class="btn-nav" id="btn-skip" onclick="skipQ()">Skip</button>
+      <button class="btn-nav primary" id="btn-next" onclick="navigate(1)">Next →</button>
+    </div>
+    <button class="btn btn-outline" id="btn-submit" onclick="submitQuiz()" style="display:none">Submit & See Results ✓</button>
+  </div>
+
+  <!-- PAGE 3: RESULTS -->
+  <div id="page-results" class="page">
+    <div class="card" style="text-align:center;margin-bottom:24px">
+      <div class="score-ring">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="60" fill="none" stroke="#1a1a26" stroke-width="12"/>
+          <circle id="score-circle" cx="70" cy="70" r="60" fill="none" stroke="url(#sg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377"/>
+          <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7c6aff"/><stop offset="100%" stop-color="#6affdb"/></linearGradient></defs>
+        </svg>
+        <div class="score-num" id="score-num">0%<span>score</span></div>
+      </div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val c" id="s-correct">0</div><div class="stat-label">Correct</div></div>
+        <div class="stat-box"><div class="stat-val w" id="s-wrong">0</div><div class="stat-label">Wrong</div></div>
+        <div class="stat-box"><div class="stat-val s" id="s-skip">0</div><div class="stat-label">Skipped</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px">
+        <div class="card-title">Answer Review</div>
+        <div class="info-pill"><span class="dot" style="background:var(--accent2)"></span><span id="review-count"></span></div>
+      </div>
+      <div id="review-list"></div>
+    </div>
+    <button class="btn" onclick="resetQuiz()" style="margin-top:20px">Try Again →</button>
+  </div>
+</div>
+
+<script>
+const RAW=[{t:"Loop Detection",q:"What is a loop (cycle) in a linked list?",o:["A node pointing to a node that appears later in the sequence.","A node pointing back to a previous node, creating an infinite sequence.","Two nodes pointing to the same node.","The last node pointing to NULL."],a:1},{t:"Loop Detection",q:"Which of the following is the most common and efficient algorithm to detect a loop in a linked list?",o:["Linear Search","Binary Search","Floyd's Cycle Detection Algorithm (Tortoise and Hare)","Two-Pointer Technique for Sorting"],a:2},{t:"Loop Detection",q:"In Floyd's Cycle Detection algorithm, if a loop exists, what happens to the slow and fast pointers?",o:["They never meet.","They meet at the head node.","They are guaranteed to meet at some point within the loop.","The fast pointer becomes NULL."],a:2},{t:"Loop Detection",q:"What is the primary consequence of a loop in a singly linked list?",o:["The list becomes doubly linked.","Traversing the list becomes impossible and may never terminate.","The list automatically sorts itself.","Memory is automatically deallocated."],a:1},{t:"Loop Detection",q:"In Floyd's algorithm, what does the fast pointer typically do?",o:["Moves one node at a time.","Moves two nodes at a time.","Moves to the middle of the list.","Points to the head of the list."],a:1},{t:"Loop Detection",q:"If a linked list has no cycle, what will the fast pointer eventually point to in Floyd's algorithm?",o:["The slow pointer","The head","NULL","The tail"],a:2},{t:"Loop Detection",q:"Besides Floyd's algorithm, what is another simple method to detect a loop?",o:["Reversing the list","Using a Hash Set to store visited node addresses","Counting the total number of nodes","Swapping adjacent nodes"],a:1},{t:"Loop Detection",q:"What is the space complexity of detecting a loop using a Hash Set approach?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2},{t:"Loop Detection",q:"What is the time complexity of Floyd's Cycle Detection algorithm?",o:["O(n^2)","O(n)","O(log n)","O(n log n)"],a:1},{t:"Loop Detection",q:"After detecting a loop using Floyd's algorithm, how do you find the starting node of the loop?",o:["Reset slow to head and move both pointers one step until they meet.","Move the fast pointer one step at a time until it meets the slow pointer.","Increment the fast pointer's speed.","The meeting point itself is the start of the loop."],a:0},{t:"Loop Detection",q:"What is the primary advantage of Floyd's Cycle Detection algorithm over the Hash Set method?",o:["It works on doubly linked lists only.","It has a better time complexity (O(log n)).","It has a constant space complexity (O(1)).","It can detect the exact node where the loop starts immediately."],a:2},{t:"Loop Detection",q:"What will happen if you try to traverse a linked list containing a loop without any detection mechanism?",o:["The program will crash immediately.","The traversal will enter an infinite loop.","The list will be automatically repaired.","The traversal will stop at the duplicate node."],a:1},{t:"Loop Detection",q:"Consider a singly linked list: 1->2->3->4->5->3 (where 5 points back to 3). What is the length of the loop?",o:["2","3","4","5"],a:1},{t:"Loop Detection",q:"In Floyd's algorithm, if the list has a loop, why is it guaranteed that the slow and fast pointers will meet?",o:["Because the fast pointer is always exactly one step ahead.","Because of the relative speed difference, the distance between them decreases by 1 each step inside the loop.","Because the fast pointer eventually becomes the slow pointer.","Because the list sorts itself."],a:1},{t:"Loop Detection",q:"What is the minimum number of pointers required to detect a loop in a singly linked list using Floyd's algorithm?",o:["1","2","3","4"],a:1},{t:"Segregate Even & Odd Nodes",q:"In the context of segregating even and odd nodes in a linked list, what are we typically segregating based on?",o:["The data value of the node (numerical value)","The memory address of the node","The position (index) of the node","The color of the node"],a:0},{t:"Segregate Even & Odd Nodes",q:"Given a linked list: 1->2->3->4->5, after segregating even and odd nodes (keeping relative order), what will the list look like?",o:["1->3->5->2->4","2->4->1->3->5","5->3->1->4->2","1->2->3->4->5"],a:1},{t:"Segregate Even & Odd Nodes",q:"What is the time complexity of the standard algorithm to segregate even and odd nodes?",o:["O(n^2)","O(n log n)","O(n)","O(1)"],a:2},{t:"Segregate Even & Odd Nodes",q:"What is the space complexity of the standard in-place algorithm to segregate even and odd nodes?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2},{t:"Segregate Even & Odd Nodes",q:"What is a potential pitfall if you forget to set the next pointer of the last node to NULL after segregation?",o:["The list will become sorted","The list may contain a cycle","The list will lose all odd nodes","The list will become doubly linked"],a:1},{t:"Segregate Even & Odd Nodes",q:"What will be the output after segregating even and odd nodes in the list: 1->3->5->2->4?",o:["1->3->5->2->4","2->4->1->3->5","1->2->3->4->5","5->3->1->4->2"],a:1},{t:"Segregate Even & Odd Nodes",q:"In the segregation algorithm, why do we need to maintain both start and end pointers for the even and odd lists?",o:["To count the number of nodes","To enable O(1) time complexity for appending new nodes to the sublists","To sort the sublists","To reverse the sublists"],a:1},{t:"Sort Bitonic DLL",q:"What does the term 'bitonic' mean in the context of a Doubly Linked List (DLL)?",o:["The list contains only two unique values","The list first increases (strictly) and then decreases (strictly)","The list is circular","The list has an even number of nodes"],a:1},{t:"Sort Bitonic DLL",q:"Which of the following sequences represents a bitonic doubly linked list?",o:["1, 2, 3, 4, 5","5, 4, 3, 2, 1","1, 3, 5, 4, 2","2, 4, 1, 3, 5"],a:2},{t:"Sort Bitonic DLL",q:"What is a key advantage of sorting a bitonic DLL compared to sorting a random DLL?",o:["It requires no comparisons","It can be sorted in O(log n) time","The inflection point provides a natural split into two sorted lists","It requires extra space for merging"],a:2},{t:"Sort Bitonic DLL",q:"What is the time complexity of the most efficient algorithm to sort a bitonic DLL?",o:["O(n)","O(n log n)","O(n^2)","O(log n)"],a:0},{t:"Sort Bitonic DLL",q:"What is the first step in the standard algorithm to sort a bitonic DLL?",o:["Reverse the entire list","Find the node where the sequence stops increasing and starts decreasing","Split the list into two halves","Sort each half individually"],a:1},{t:"Sort Bitonic DLL",q:"Consider a bitonic DLL: 1 <-> 3 <-> 5 <-> 4 <-> 2. What is the peak node?",o:["1","3","5","4"],a:2},{t:"Sort Bitonic DLL",q:"What is the space complexity of the split-reverse-merge algorithm for bitonic DLL?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2},{t:"Merge Sort for DLL",q:"What type of algorithm is Merge Sort?",o:["Greedy Algorithm","Dynamic Programming","Divide and Conquer","Backtracking"],a:2},{t:"Merge Sort for DLL",q:"What is the time complexity of Merge Sort for a DLL in all cases?",o:["O(n)","O(n^2)","O(n log n)","O(log n)"],a:2},{t:"Merge Sort for DLL",q:"What is the space complexity of recursive Merge Sort for DLL (excluding recursion stack)?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2},{t:"Merge Sort for DLL",q:"After splitting a DLL into two halves for Merge Sort, what should the last node of the first half point to?",o:["The head of the second half","The first node of the first half","NULL","The tail of the second half"],a:2},{t:"Merge Sort for DLL",q:"What is the primary challenge when implementing Merge Sort on a DLL compared to an array?",o:["More comparisons are needed","Difficulty in random access (finding middle and splitting)","Higher time complexity","Cannot handle duplicate values"],a:1},{t:"Merge Sort for DLL",q:"Which correctly represents the recurrence relation for Merge Sort time complexity?",o:["T(n) = 2T(n/2) + O(1)","T(n) = T(n-1) + O(n)","T(n) = 2T(n/2) + O(n)","T(n) = T(n/2) + O(1)"],a:2},{t:"Minimum Stack",q:"What is the primary purpose of a 'Minimum Stack'?",o:["To sort the elements in the stack","To retrieve the minimum element in O(1) time","To keep the stack size minimal","To implement a stack using arrays"],a:1},{t:"Minimum Stack",q:"What is the time complexity to find the minimum element in a standard stack without special design?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2},{t:"Minimum Stack",q:"Which data structure is commonly used as auxiliary space to implement a Minimum Stack?",o:["Another stack","A queue","A linked list","An array"],a:0},{t:"Minimum Stack",q:"What is the time complexity of the getMin() operation in a properly implemented Minimum Stack?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2},{t:"Minimum Stack",q:"What is the space complexity of the auxiliary stack approach in the worst case?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2},{t:"Minimum Stack",q:"When pushing an element onto a Minimum Stack, when do you push onto the auxiliary stack?",o:["Every time","Only when the element is smaller than or equal to the current minimum","Only when the element is larger than the current minimum","Only when the stack is empty"],a:1},{t:"Celebrity Problem",q:"In the Celebrity Problem, what is the definition of a 'celebrity'?",o:["A person who knows everyone","A person who is known by everyone but knows no one","A person who knows no one","A person who is known by no one"],a:1},{t:"Celebrity Problem",q:"What is the minimum number of celebrities possible in a party of N people?",o:["0","1","2","N"],a:0},{t:"Celebrity Problem",q:"What is the maximum number of celebrities possible in a party of N people?",o:["0","1","2","N"],a:1},{t:"Celebrity Problem",q:"Which approach is commonly used to solve the Celebrity Problem in O(N) time?",o:["Brute force checking all pairs","Using a stack or two-pointer elimination technique","Using dynamic programming","Using a hash table"],a:1},{t:"Celebrity Problem",q:"What is the time complexity of the brute force approach to find a celebrity?",o:["O(n)","O(n log n)","O(n^2)","O(1)"],a:2},{t:"Celebrity Problem",q:"In a graph theory perspective, what does a celebrity represent?",o:["A node with out-degree 0 and in-degree N-1","A node with in-degree 0 and out-degree N-1","A node with both in-degree and out-degree N-1","A node with degree N-1"],a:0},{t:"Iterative Tower of Hanoi",q:"What is the minimum number of moves required to solve the Tower of Hanoi problem with n disks?",o:["n","2^n","2^n - 1","n^2"],a:2},{t:"Iterative Tower of Hanoi",q:"In the iterative algorithm, what is used to simulate the recursion?",o:["A queue","A stack","A tree","A graph"],a:1},{t:"Iterative Tower of Hanoi",q:"In the iterative Tower of Hanoi, which disk is moved first?",o:["The largest disk","The smallest disk","Any disk","The middle-sized disk"],a:1},{t:"Iterative Tower of Hanoi",q:"What is the time complexity of the iterative Tower of Hanoi algorithm?",o:["O(n)","O(2^n)","O(n^2)","O(n log n)"],a:1},{t:"Iterative Tower of Hanoi",q:"The iterative solution for Tower of Hanoi is based on which mathematical concept?",o:["Gray code","Binary search","Fibonacci sequence","Prime numbers"],a:0},{t:"Iterative Tower of Hanoi",q:"What is the space complexity of the iterative algorithm using stacks?",o:["O(1)","O(n)","O(2^n)","O(n^2)"],a:1},{t:"Stock Span Problem",q:"What does the stock span of a stock price on a given day represent?",o:["The price of the stock on that day","The number of consecutive days (including current day) the price has been less than or equal to current day's price","The total volume of stocks traded","The difference between current day's price and previous day's price"],a:1},{t:"Stock Span Problem",q:"Which data structure is most commonly used to solve the Stock Span problem efficiently?",o:["Queue","Stack","Heap","Tree"],a:1},{t:"Stock Span Problem",q:"What is the time complexity of the efficient stack-based solution for the Stock Span problem?",o:["O(n)","O(n^2)","O(n log n)","O(log n)"],a:0},{t:"Stock Span Problem",q:"Given prices: [100, 80, 60, 70, 60, 75, 85]. What is the span for the price 100 (first day)?",o:["0","1","100","2"],a:1},{t:"Stock Span Problem",q:"If the stock prices are in strictly increasing order, what will be the span values?",o:["All 1's","1, 2, 3, 4, ... n","1, 1, 1, 1, ...","n, n-1, ... 1"],a:1},{t:"Stock Span Problem",q:"What is the space complexity of the efficient stack-based solution?",o:["O(1)","O(n)","O(log n)","O(n^2)"],a:1},{t:"Priority Queue using DLL",q:"What is a Priority Queue?",o:["A queue where elements are processed in FIFO order","A queue where each element has a priority and higher priority elements are processed first","A queue that only stores priority values","A stack with priority"],a:1},{t:"Priority Queue using DLL",q:"What is the time complexity of inserting an element into a sorted DLL-based Priority Queue in the worst case?",o:["O(1)","O(n)","O(log n)","O(n log n)"],a:1},{t:"Priority Queue using DLL",q:"What is the time complexity of deleting the highest priority element from a sorted DLL-based Priority Queue?",o:["O(1)","O(n)","O(log n)","O(n log n)"],a:0},{t:"Priority Queue using DLL",q:"What is the primary disadvantage of using a sorted DLL for a Priority Queue compared to a Binary Heap?",o:["O(n) insertion vs O(log n) in heap","O(n) deletion vs O(log n) in heap","O(n) peek vs O(1) in heap","Higher memory usage"],a:0},{t:"Sort without Extra Space",q:"Which sorting algorithm is an example of an in-place sorting algorithm?",o:["Merge Sort","Bubble Sort","Counting Sort","Radix Sort"],a:1},{t:"Sort without Extra Space",q:"What is the space complexity of Bubble Sort (excluding input array)?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2},{t:"Sort without Extra Space",q:"Which sorting algorithm is NOT typically in-place?",o:["Quick Sort","Insertion Sort","Merge Sort","Selection Sort"],a:2},{t:"Sort without Extra Space",q:"What is the space complexity of Selection Sort?",o:["O(1)","O(n)","O(log n)","O(n^2)"],a:0},{t:"Sort without Extra Space",q:"Heap Sort is considered in-place because it uses:",o:["O(1) auxiliary space","O(log n) auxiliary space","O(n) auxiliary space","O(n log n) auxiliary space"],a:0},{t:"Stack Permutations",q:"What is a stack permutation?",o:["Sorting a stack using another stack","A permutation of input that can be produced by passing it through a stack","The order of elements in a stack after multiple pushes","Reversing a stack"],a:1},{t:"Stack Permutations",q:"Given an input sequence [1,2,3] and a stack, which output sequence is NOT possible?",o:["1,2,3","3,2,1","2,1,3","3,1,2"],a:3},{t:"Stack Permutations",q:"What is the time complexity to check if a given permutation is a valid stack permutation?",o:["O(n)","O(n^2)","O(log n)","O(n log n)"],a:0},{t:"Stack Permutations",q:"How many distinct stack permutations are possible for input sequence [1,2,3]?",o:["3","4","5","6"],a:2},{t:"Stack Permutations",q:"The number of stack permutations for n elements is given by which number sequence?",o:["Fibonacci numbers","Catalan numbers","Prime numbers","Factorial numbers"],a:1},{t:"Max Sliding Window",q:"What data structure is most commonly used to solve the Sliding Window Maximum problem efficiently?",o:["Stack","Queue","Deque (Double-ended queue)","Priority Queue"],a:2},{t:"Max Sliding Window",q:"What is the time complexity of the efficient deque-based solution?",o:["O(n * k)","O(n log k)","O(n)","O(k)"],a:2},{t:"Max Sliding Window",q:"Given an array [1,3,-1,-3,5,3,6,7] and k=3, what is the first window's maximum?",o:["1","3","-1","5"],a:1},{t:"Max Sliding Window",q:"What is the space complexity of the deque-based solution (excluding output array)?",o:["O(1)","O(k)","O(n)","O(log k)"],a:1},{t:"Max Sliding Window",q:"In the deque-based algorithm, when do you remove elements from the back of the deque?",o:["When they are out of window","When they are smaller than or equal to the current element","When they are larger than the current element","Never"],a:1},{t:"Recover BST",q:"In the 'Recover BST' problem, what is wrong with the tree?",o:["It is unbalanced","Two nodes have been swapped by mistake","It has a cycle","It is empty"],a:1},{t:"Recover BST",q:"Which traversal of a BST gives nodes in sorted order?",o:["Preorder","Inorder","Postorder","Level order"],a:1},{t:"Recover BST",q:"In the inorder traversal of a BST with two swapped nodes, how many times will we find a pair where previous > current?",o:["Always 1","Always 2","Either 1 or 2","0"],a:2},{t:"Recover BST",q:"What is the space complexity of the efficient Morris traversal-based solution?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2},{t:"Recover BST",q:"Given an inorder traversal [1,3,2,4] of a BST with swapped nodes, which nodes are swapped?",o:["1 and 2","3 and 2","3 and 4","1 and 4"],a:1},{t:"Views of Tree",q:"Which tree traversal is typically used to find the Left View of a binary tree?",o:["Inorder","Preorder","Level Order","Postorder"],a:2},{t:"Views of Tree",q:"In the Left View of a binary tree, which node at each level is visible?",o:["The rightmost node","The leftmost node","The middle node","All nodes"],a:1},{t:"Views of Tree",q:"In Top View of a binary tree, what concept is used to determine which nodes are visible?",o:["Node height","Node depth","Horizontal distance from root","Node color"],a:2},{t:"Views of Tree",q:"What is the time complexity of finding all tree views using level order traversal?",o:["O(n)","O(n log n)","O(n^2)","O(log n)"],a:0},{t:"Views of Tree",q:"In Bottom View of a binary tree, which node is selected for each horizontal distance?",o:["The first node encountered","The last node encountered (lowest level)","The node with maximum value","The node with minimum value"],a:1},{t:"Vertical Order Traversal",q:"In vertical order traversal of a binary tree, what determines the 'vertical line' a node belongs to?",o:["Node's depth","Node's value","Horizontal distance from the root","Node's height"],a:2},{t:"Vertical Order Traversal",q:"What traversal is typically used to perform vertical order traversal?",o:["Preorder only","Inorder only","Level order (BFS)","Postorder only"],a:2},{t:"Vertical Order Traversal",q:"What is the time complexity of vertical order traversal using BFS and a map?",o:["O(n)","O(n log n)","O(n^2)","O(log n)"],a:1},{t:"Vertical Order Traversal",q:"What is the horizontal distance of the root node?",o:["-1","0","1","Depends on tree"],a:1},{t:"Vertical Order Traversal",q:"If a node has horizontal distance = 1, what is the horizontal distance of its right child?",o:["0","1","2","3"],a:2},{t:"Boundary Traversal",q:"In boundary traversal of a binary tree, which parts are traversed?",o:["All nodes","Left boundary, leaves, right boundary","Only leaves","Only root and leaves"],a:1},{t:"Boundary Traversal",q:"In boundary traversal, the left boundary is traversed in which order?",o:["Top-down","Bottom-up","Level order","Random"],a:0},{t:"Boundary Traversal",q:"In boundary traversal, the right boundary is traversed in which order?",o:["Top-down","Bottom-up","Level order","Random"],a:1},{t:"Boundary Traversal",q:"What is the time complexity of boundary traversal?",o:["O(n)","O(n log n)","O(n^2)","O(log n)"],a:0},{t:"Boundary Traversal",q:"In the standard boundary traversal algorithm, what is the correct order of the three steps?",o:["Leaves, left boundary, right boundary","Left boundary, leaves, right boundary","Right boundary, leaves, left boundary","Left boundary, right boundary, leaves"],a:1},{t:"BFS & DFS",q:"Which data structure is primarily used for BFS traversal?",o:["Stack","Queue","Priority Queue","Heap"],a:1},{t:"BFS & DFS",q:"What is the time complexity of BFS on a graph with V vertices and E edges (adjacency list)?",o:["O(V)","O(E)","O(V + E)","O(V * E)"],a:2},{t:"BFS & DFS",q:"BFS can be used to find the shortest path in which type of graph?",o:["Weighted graph","Unweighted graph","Directed acyclic graph","Any graph"],a:1},{t:"BFS & DFS",q:"In an undirected graph, what does a back edge during DFS indicate?",o:["A bridge","A cycle","A cross edge","A tree edge"],a:1},{t:"BFS & DFS",q:"What is the space complexity of BFS in the worst case?",o:["O(V)","O(E)","O(V + E)","O(log V)"],a:0},{t:"Dial's Algorithm",q:"Dial's algorithm is an optimization of which classic shortest path algorithm?",o:["Bellman-Ford Algorithm","Floyd-Warshall Algorithm","Dijkstra's Algorithm","A* Search Algorithm"],a:2},{t:"Dial's Algorithm",q:"What data structure does Dial's algorithm use instead of a priority queue?",o:["A stack","An array of buckets","A binary heap","A Fibonacci heap"],a:1},{t:"Dial's Algorithm",q:"What is the time complexity of Dial's algorithm?",o:["O(V log V)","O(E + V log V)","O(E + WV)","O(VE)"],a:2},{t:"Dial's Algorithm",q:"What specific constraint on edge weights makes Dial's algorithm most effective?",o:["Weights must be negative","Weights must be floating point numbers","Weights must be small integers","Weights must be all equal"],a:2},{t:"Dial's Algorithm",q:"Dial's algorithm is also known as:",o:["Bucket-based Dijkstra","Heap-based Dijkstra","Fibonacci Dijkstra","Binary Dijkstra"],a:0},{t:"Bellman-Ford Algorithm",q:"What is the main advantage of Bellman-Ford over Dijkstra's algorithm?",o:["It is faster","It handles negative edge weights","It uses less memory","It works for all graph types"],a:1},{t:"Bellman-Ford Algorithm",q:"What is the time complexity of the Bellman-Ford algorithm?",o:["O(V)","O(E)","O(V * E)","O(V^2)"],a:2},{t:"Bellman-Ford Algorithm",q:"What does Bellman-Ford do after V-1 iterations?",o:["Checks for negative cycles","Terminates","Runs V more iterations","Doubles the iterations"],a:0},{t:"Bellman-Ford Algorithm",q:"In Bellman-Ford, what is a 'relaxation' of an edge (u, v)?",o:["if dist[u] + weight < dist[v], update dist[v]","if dist[u] > dist[v], swap them","Add weight to both vertices","Remove the edge"],a:0},{t:"Bellman-Ford Algorithm",q:"Bellman-Ford is based on which algorithmic paradigm?",o:["Greedy","Divide and Conquer","Dynamic Programming","Backtracking"],a:2},{t:"Topological Sort",q:"On which type of graph can topological sort be applied?",o:["Any directed graph","Any undirected graph","Directed Acyclic Graph (DAG)","Any connected graph"],a:2},{t:"Topological Sort",q:"In Kahn's algorithm for topological sort, what data structure is used for vertices with in-degree zero?",o:["Stack","Queue","Priority Queue","Array"],a:1},{t:"Topological Sort",q:"What is the time complexity of topological sort using Kahn's algorithm?",o:["O(V)","O(E)","O(V + E)","O(V * E)"],a:2},{t:"Topological Sort",q:"In Kahn's algorithm, what does it indicate if the queue becomes empty before all vertices are processed?",o:["The graph has a cycle","The graph is disconnected","The algorithm is complete","The graph has multiple sources"],a:0},{t:"Topological Sort",q:"Which of the following is a common application of topological sort?",o:["Finding shortest path","Finding minimum spanning tree","Task scheduling with dependencies","Finding connected components"],a:2},{t:"Heap Sort",q:"In a max-heap, what is the relationship between parent and child nodes?",o:["Parent <= Child","Parent >= Child","Parent = Child","No relationship"],a:1},{t:"Heap Sort",q:"What is the time complexity of building a heap from an array of n elements?",o:["O(n)","O(n log n)","O(log n)","O(n^2)"],a:0},{t:"Heap Sort",q:"What is the time complexity of Heap Sort in all cases (best, average, worst)?",o:["O(n)","O(n log n)","O(n^2)","O(log n)"],a:1},{t:"Heap Sort",q:"What is the space complexity of Heap Sort (excluding input array)?",o:["O(1)","O(n)","O(log n)","O(n log n)"],a:0},{t:"Heap Sort",q:"Is Heap Sort stable?",o:["Yes","No","Depends on implementation","Only for integers"],a:1}];
+
+const ALL_TOPICS=[...new Set(RAW.map(q=>q.t))];
+let mode='random',questions=[],userAnswers=[],currentQ=0,submitted=false;
+
+function buildTopicGrid(){
+  const g=document.getElementById('topic-grid');g.innerHTML='';
+  ALL_TOPICS.forEach(t=>{
+    const n=RAW.filter(q=>q.t===t).length;
+    const c=document.createElement('div');c.className='topic-chip';c.dataset.topic=t;
+    c.innerHTML=`${t} <span style="color:var(--muted);margin-left:4px">(${n})</span>`;
+    c.onclick=()=>c.classList.toggle('selected');g.appendChild(c);
+  });
+}
+buildTopicGrid();
+
+function setMode(m){
+  mode=m;
+  document.getElementById('mode-random').classList.toggle('active',m==='random');
+  document.getElementById('mode-topic').classList.toggle('active',m==='topic');
+  document.getElementById('random-options').style.display=m==='random'?'block':'none';
+  document.getElementById('topic-options').style.display=m==='topic'?'block':'none';
+}
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+
+function startQuiz(){
+  document.getElementById('count-error').classList.remove('visible');
+  document.getElementById('topic-error').classList.remove('visible');
+  if(mode==='random'){
+    const n=parseInt(document.getElementById('q-count').value);
+    if(!n||n<1||n>RAW.length){
+      document.getElementById('count-error').textContent=`Enter a number between 1 and ${RAW.length}.`;
+      document.getElementById('count-error').classList.add('visible');return;
+    }
+    questions=shuffle(RAW).slice(0,n);
+  }else{
+    const sel=[...document.querySelectorAll('.topic-chip.selected')].map(c=>c.dataset.topic);
+    if(!sel.length){document.getElementById('topic-error').classList.add('visible');return;}
+    const pp=parseInt(document.getElementById('q-per-topic').value)||Infinity;
+    questions=[];
+    sel.forEach(t=>{const pool=shuffle(RAW.filter(q=>q.t===t));questions.push(...pool.slice(0,pp));});
+    questions=shuffle(questions);
+  }
+  userAnswers=new Array(questions.length).fill(null);
+  currentQ=0;submitted=false;
+  showPage('page-quiz');renderQ();
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderQ(){
+  const q=questions[currentQ],total=questions.length;
+  document.getElementById('quiz-meta').textContent=`Question ${currentQ+1} of ${total}`;
+  document.getElementById('topic-label').textContent=q.t;
+  document.getElementById('q-num').textContent=`Q ${String(currentQ+1).padStart(2,'0')}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('progress-fill').style.width=`${(currentQ/total)*100}%`;
+
+  const list=document.getElementById('options-list');list.innerHTML='';
+  const keys=['A','B','C','D'];
+  q.o.forEach((opt,i)=>{
+    const el=document.createElement('div');el.className='option';el.style.animationDelay=`${i*0.06}s`;
+    if(userAnswers[currentQ]===i)el.classList.add('selected');
+    if(submitted){if(i===q.a)el.classList.add('correct');else if(userAnswers[currentQ]===i)el.classList.add('wrong');}
+    el.innerHTML=`<div class="option-key">${keys[i]}</div><span>${opt}</span>`;
+    if(!submitted)el.onclick=()=>selectOpt(i);
+    list.appendChild(el);
+  });
+
+  const ak=document.getElementById('answer-key');
+  if(submitted){ak.textContent=`✓ Correct: ${keys[q.a]}. ${q.o[q.a]}`;ak.classList.add('visible');}
+  else{ak.classList.remove('visible');}
+
+  const isLast=currentQ===total-1;
+  document.getElementById('btn-prev').disabled=currentQ===0;
+  document.getElementById('btn-next').style.display=(!isLast&&!submitted)?'block':'none';
+  document.getElementById('btn-skip').style.display=submitted?'none':'block';
+  document.getElementById('btn-submit').style.display=(isLast&&!submitted)?'block':'none';
+}
+
+function selectOpt(i){userAnswers[currentQ]=i;renderQ();}
+function skipQ(){userAnswers[currentQ]=null;if(currentQ<questions.length-1)navigate(1);}
+function navigate(d){currentQ=Math.max(0,Math.min(questions.length-1,currentQ+d));renderQ();}
+
+function submitQuiz(){
+  submitted=true;
+  document.getElementById('btn-submit').style.display='none';
+  document.getElementById('btn-skip').style.display='none';
+  document.getElementById('btn-next').style.display='none';
+  renderQ();
+  setTimeout(showResults,400);
+}
+
+function showResults(){
+  let correct=0,wrong=0,skip=0;
+  questions.forEach((q,i)=>{
+    if(userAnswers[i]===null)skip++;
+    else if(userAnswers[i]===q.a)correct++;
+    else wrong++;
+  });
+  const total=questions.length,pct=Math.round((correct/total)*100);
+  document.getElementById('s-correct').textContent=correct;
+  document.getElementById('s-wrong').textContent=wrong;
+  document.getElementById('s-skip').textContent=skip;
+  document.getElementById('score-num').innerHTML=`${pct}%<span>score</span>`;
+
+  const circ=document.getElementById('score-circle');
+  const circumference=2*Math.PI*60;
+  const offset=circumference-(pct/100)*circumference;
+  setTimeout(()=>{circ.style.transition='stroke-dashoffset 1s ease';circ.style.strokeDashoffset=offset;},100);
+
+  const grade=pct>=90?'Excellent! 🎉':pct>=70?'Great Work! 👍':pct>=50?'Keep Practicing 📚':'Needs Improvement 💪';
+  document.getElementById('result-title').textContent=grade;
+  document.getElementById('result-sub').textContent=`${correct} correct out of ${total} questions`;
+  document.getElementById('review-count').textContent=`${total} questions`;
+
+  const rl=document.getElementById('review-list');rl.innerHTML='';
+  const keys=['A','B','C','D'];
+  questions.forEach((q,i)=>{
+    const ua=userAnswers[i],isc=ua===q.a,iss=ua===null;
+    const item=document.createElement('div');
+    item.className=`review-item ${isc?'cb':iss?'':'wb'}`;item.style.animationDelay=`${i*0.04}s`;
+    const tag=isc?`<span class="rtag tag-c">✓ Correct</span>`:iss?`<span class="rtag tag-s">— Skipped</span>`:`<span class="rtag tag-w">✗ Wrong</span>`;
+    item.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted)">Q${i+1}</span>${tag}<span style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px">${q.t}</span></div><div class="review-q">${q.q}</div><div class="review-answers">${!isc&&!iss?`<div class="rw">✗ Your answer: ${keys[ua]}. ${q.o[ua]}</div>`:''}${iss?`<div class="rs">— Skipped</div>`:''}<div class="rc">✓ Correct: ${keys[q.a]}. ${q.o[q.a]}</div></div>`;
+    rl.appendChild(item);
+  });
+  showPage('page-results');
+}
+
+function resetQuiz(){
+  submitted=false;questions=[];userAnswers=[];currentQ=0;
+  document.getElementById('score-circle').style.transition='none';
+  document.getElementById('score-circle').style.strokeDashoffset=377;
+  document.querySelectorAll('.topic-chip').forEach(c=>c.classList.remove('selected'));
+  showPage('page-setup');
+}
+</script>
+</body>
+</html>
